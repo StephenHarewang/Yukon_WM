@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yukon_wm.dao.DelivererDao">
+
+    <resultMap type="com.yukon_wm.entity.Deliverer" id="DelivererMap">
+        <result property="version" column="version" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="tel" column="tel" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="VARCHAR"/>
+        <result property="money" column="money" jdbcType="NUMERIC"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="DelivererMap">
+        select
+          version, create_time, update_time, id, username, password, name, sex, tel, state, money
+        from deliverer
+        where id = #{id}
+    </select>
+
+    <select id="queryByUsername" resultMap="DelivererMap">
+        select
+            version, create_time, update_time, id, username, password, name, sex, tel, state, money
+        from deliverer
+        where username = #{username}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="DelivererMap">
+        select
+          version, create_time, update_time, id, username, password, name, sex, tel, state, money
+        from deliverer
+        <where>
+            <if test="version != null">
+                and version = #{version}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="tel != null and tel != ''">
+                and tel = #{tel}
+            </if>
+            <if test="state != null and state != ''">
+                and state = #{state}
+            </if>
+            <if test="money != null">
+                and money = #{money}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from deliverer
+        <where>
+            <if test="version != null">
+                and version = #{version}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="tel != null and tel != ''">
+                and tel = #{tel}
+            </if>
+            <if test="state != null and state != ''">
+                and state = #{state}
+            </if>
+            <if test="money != null">
+                and money = #{money}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into deliverer(id,version, create_time, update_time, username, password, name, sex, tel, state, money)
+        values (#{id},#{version}, #{createTime}, #{updateTime}, #{username}, #{password}, #{name}, #{sex}, #{tel}, #{state}, #{money})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into deliverer(id,version, create_time, update_time, username, password, name, sex, tel, state, money)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{id},#{entity.version}, #{entity.createTime}, #{entity.updateTime}, #{entity.username}, #{entity.password}, #{entity.name}, #{entity.sex}, #{entity.tel}, #{entity.state}, #{entity.money})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into deliverer(version, create_time, update_time, username, password, name, sex, tel, state, money)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.version}, #{entity.createTime}, #{entity.updateTime}, #{entity.username}, #{entity.password}, #{entity.name}, #{entity.sex}, #{entity.tel}, #{entity.state}, #{entity.money})
+        </foreach>
+        on duplicate key update
+        version = values(version),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        username = values(username),
+        password = values(password),
+        name = values(name),
+        sex = values(sex),
+        tel = values(tel),
+        state = values(state),
+        money = values(money)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update deliverer
+        <set>
+            <if test="version != null">
+                version = #{version},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="tel != null and tel != ''">
+                tel = #{tel},
+            </if>
+            <if test="state != null and state != ''">
+                state = #{state},
+            </if>
+            <if test="money != null">
+                money = #{money},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from deliverer where id = #{id}
+    </delete>
+
+</mapper>
+

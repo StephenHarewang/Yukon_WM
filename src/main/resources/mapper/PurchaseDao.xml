@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yukon_wm.dao.PurchaseDao">
+
+    <resultMap type="com.yukon_wm.entity.Purchase" id="PurchaseMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="version" column="version" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="oid" column="oid" jdbcType="VARCHAR"/>
+        <result property="gid" column="gid" jdbcType="VARCHAR"/>
+        <result property="quantity" column="quantity" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="PurchaseMap">
+        select
+          id, version, create_time, update_time, oid, gid, quantity
+        from purchase
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="PurchaseMap">
+        select
+          id, version, create_time, update_time, oid, gid, quantity
+        from purchase
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="version != null">
+                and version = #{version}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="oid != null and oid != ''">
+                and oid = #{oid}
+            </if>
+            <if test="gid != null and gid != ''">
+                and gid = #{gid}
+            </if>
+            <if test="quantity != null">
+                and quantity = #{quantity}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from purchase
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="version != null">
+                and version = #{version}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="oid != null and oid != ''">
+                and oid = #{oid}
+            </if>
+            <if test="gid != null and gid != ''">
+                and gid = #{gid}
+            </if>
+            <if test="quantity != null">
+                and quantity = #{quantity}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into purchase(version, create_time, update_time, oid, gid, quantity)
+        values (#{version}, #{createTime}, #{updateTime}, #{oid}, #{gid}, #{quantity})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into purchase(version, create_time, update_time, oid, gid, quantity)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.version}, #{entity.createTime}, #{entity.updateTime}, #{entity.oid}, #{entity.gid}, #{entity.quantity})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into purchase(version, create_time, update_time, oid, gid, quantity)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.version}, #{entity.createTime}, #{entity.updateTime}, #{entity.oid}, #{entity.gid}, #{entity.quantity})
+        </foreach>
+        on duplicate key update
+        version = values(version),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        oid = values(oid),
+        gid = values(gid),
+        quantity = values(quantity)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update purchase
+        <set>
+            <if test="version != null">
+                version = #{version},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="oid != null and oid != ''">
+                oid = #{oid},
+            </if>
+            <if test="gid != null and gid != ''">
+                gid = #{gid},
+            </if>
+            <if test="quantity != null">
+                quantity = #{quantity},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from purchase where id = #{id}
+    </delete>
+
+</mapper>
+

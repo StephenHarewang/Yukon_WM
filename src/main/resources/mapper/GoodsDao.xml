@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yukon_wm.dao.GoodsDao">
+
+    <resultMap type="com.yukon_wm.entity.Goods" id="GoodsMap">
+        <result property="version" column="version" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="sales" column="sales" jdbcType="INTEGER"/>
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="sid" column="sid" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="NUMERIC"/>
+        <result property="stock" column="stock" jdbcType="INTEGER"/>
+        <result property="pointA" column="point_a" jdbcType="VARCHAR"/>
+        <result property="pointB" column="point_b" jdbcType="VARCHAR"/>
+        <result property="imageUrl" column="image_url" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="GoodsMap">
+        select
+          version, create_time, update_time, sales, id, sid, name, price, stock, point_a, point_b, image_url
+        from goods
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="GoodsMap">
+        select
+          version, create_time, update_time, sales, id, sid, name, price, stock, point_a, point_b, image_url
+        from goods
+        <where>
+            <if test="version != null">
+                and version = #{version}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="sales != null">
+                and sales = #{sales}
+            </if>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="sid != null and sid != ''">
+                and sid = #{sid}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="price != null">
+                and price = #{price}
+            </if>
+            <if test="stock != null">
+                and stock = #{stock}
+            </if>
+            <if test="pointA != null and pointA != ''">
+                and point_a = #{pointA}
+            </if>
+            <if test="pointB != null and pointB != ''">
+                and point_b = #{pointB}
+            </if>
+            <if test="imageUrl != null and imageUrl != ''">
+                and image_url = #{imageUrl}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from goods
+        <where>
+            <if test="version != null">
+                and version = #{version}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="sales != null">
+                and sales = #{sales}
+            </if>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="sid != null and sid != ''">
+                and sid = #{sid}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="price != null">
+                and price = #{price}
+            </if>
+            <if test="stock != null">
+                and stock = #{stock}
+            </if>
+            <if test="pointA != null and pointA != ''">
+                and point_a = #{pointA}
+            </if>
+            <if test="pointB != null and pointB != ''">
+                and point_b = #{pointB}
+            </if>
+            <if test="imageUrl != null and imageUrl != ''">
+                and image_url = #{imageUrl}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into goods(id,version, create_time, update_time, sales, sid, name, price, stock, point_a, point_b, image_url)
+        values (#{id},#{version}, #{createTime}, #{updateTime}, #{sales}, #{sid}, #{name}, #{price}, #{stock}, #{pointA}, #{pointB}, #{imageUrl})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into goods(id,version, create_time, update_time, sales, sid, name, price, stock, point_a, point_b, image_url)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{id},#{entity.version}, #{entity.createTime}, #{entity.updateTime}, #{entity.sales}, #{entity.sid}, #{entity.name}, #{entity.price}, #{entity.stock}, #{entity.pointA}, #{entity.pointB}, #{entity.imageUrl})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into goods(version, create_time, update_time, sales, sid, name, price, stock, point_a, point_b, image_url)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.version}, #{entity.createTime}, #{entity.updateTime}, #{entity.sales}, #{entity.sid}, #{entity.name}, #{entity.price}, #{entity.stock}, #{entity.pointA}, #{entity.pointB}, #{entity.imageUrl})
+        </foreach>
+        on duplicate key update
+        version = values(version),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        sales = values(sales),
+        sid = values(sid),
+        name = values(name),
+        price = values(price),
+        stock = values(stock),
+        point_a = values(point_a),
+        point_b = values(point_b),
+        image_url = values(image_url)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update goods
+        <set>
+            <if test="version != null">
+                version = #{version},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="sales != null">
+                sales = #{sales},
+            </if>
+            <if test="sid != null and sid != ''">
+                sid = #{sid},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="stock != null">
+                stock = #{stock},
+            </if>
+            <if test="pointA != null and pointA != ''">
+                point_a = #{pointA},
+            </if>
+            <if test="pointB != null and pointB != ''">
+                point_b = #{pointB},
+            </if>
+            <if test="imageUrl != null and imageUrl != ''">
+                image_url = #{imageUrl},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from goods where id = #{id}
+    </delete>
+
+</mapper>
+
